@@ -1,0 +1,237 @@
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import api from "../../utils/api";
+import "./CreateUser.css";
+
+function CreateUser() {
+  const navigate = useNavigate();
+  const { user: authUser, updateStoredUser, logout } = useAuth();
+  const loadedProfileId = useRef(null);
+
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    dob: "",
+    idType: "",
+    idNumber: "",
+    emergencyName: "",
+    emergencyContact: "",
+    city: "",
+    state: "",
+    country: "",
+    pincode: "",
+    gender: "",
+    preferredDestinations: "",
+    preferredTravelStyle: "",
+    travelPreferences: "",
+    profileImage: "",
+  });
+
+  const [preview, setPreview] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authUser?.id) return;
+    if (loadedProfileId.current === authUser.id) return;
+    loadedProfileId.current = authUser.id;
+
+    api.get("/users/me")
+      .then((data) => {
+        setUser((prev) => ({ ...prev, ...data }));
+        setPreview(data.profileImage || data.profileImageUrl || data.photo || "");
+        updateStoredUser(data);
+      })
+      .finally(() => setLoading(false));
+  }, [authUser, updateStoredUser]);
+
+  const handleChange = (e) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const updated = await api.put("/users/me/complete-profile", user);
+      updateStoredUser(updated);
+      alert(updated.profileCompleted ? "Profile completed" : "Profile saved. You can complete more details later.");
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      alert(error?.response?.data?.message || "Unable to save profile");
+    }
+  };
+
+  if (loading) return <div className="eu-loading">Loading...</div>;
+
+  return (
+    <div className="create-user-page">
+      <form className="eu-card" onSubmit={handleSubmit}>
+        <div className="eu-header">
+          <div>
+            <h2>Profile Details</h2>
+            <p>Keep your contact, travel, and emergency details up to date. Account ID and email are protected.</p>
+          </div>
+          <div className="eu-header-actions">
+            <button type="button" onClick={() => navigate("/dashboard", { replace: true })}>
+              Continue
+            </button>
+            <button type="button" onClick={() => logout(false)}>Logout</button>
+          </div>
+        </div>
+
+        <div className="eu-section center">
+          <h3>Profile Photo</h3>
+          <div className="eu-avatar-box">
+            {preview ? <img src={preview} alt="profile" /> : <div className="eu-avatar-placeholder">No Image</div>}
+          </div>
+          <input type="file" onChange={handleImage} />
+        </div>
+
+        <div className="eu-section">
+          <h3>Basic Info</h3>
+          <div className="eu-grid-2">
+            <div className="eu-field">
+              <label>User ID</label>
+              <input name="userId" value={user.userId || ""} disabled readOnly />
+            </div>
+            <div className="eu-field">
+              <label>Name</label>
+              <input name="name" value={user.name || ""} onChange={handleChange} required />
+            </div>
+            <div className="eu-field">
+              <label>Email</label>
+              <input
+                name="email"
+                value={user.email || ""}
+                onChange={handleChange}
+                required
+                disabled
+              />
+            </div>
+            <div className="eu-field">
+              <label>Mobile Number</label>
+              <input name="contact" value={user.contact || ""} onChange={handleChange} />
+            </div>
+            <div className="eu-field">
+              <label>Date of Birth</label>
+              <input type="date" name="dob" value={user.dob || ""} onChange={handleChange} />
+            </div>
+            <div className="eu-field">
+              <label>Gender</label>
+              <select name="gender" value={user.gender || ""} onChange={handleChange}>
+                <option value="">Select</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="eu-section">
+            <h3>Travel Preferences</h3>
+            <div className="eu-grid-2">
+              <div className="eu-field">
+                <label>Preferred Destinations</label>
+                <input
+                  name="preferredDestinations"
+                  value={user.preferredDestinations || ""}
+                  onChange={handleChange}
+                  placeholder="Goa, Kerala, Bali"
+                />
+              </div>
+              <div className="eu-field">
+                <label>Preferred Travel Style</label>
+                <select name="preferredTravelStyle" value={user.preferredTravelStyle || ""} onChange={handleChange}>
+                  <option value="">Select</option>
+                  <option value="Adventure">Adventure</option>
+                  <option value="Family">Family</option>
+                  <option value="Luxury">Luxury</option>
+                  <option value="Budget">Budget</option>
+                  <option value="Honeymoon">Honeymoon</option>
+                </select>
+              </div>
+              <div className="eu-field eu-field-wide">
+                <label>Preferences</label>
+                <textarea
+                  name="travelPreferences"
+                  value={user.travelPreferences || ""}
+                  onChange={handleChange}
+                  placeholder="Tell us what kind of trips you prefer"
+                />
+              </div>
+            </div>
+        </div>
+
+        <div className="eu-section">
+          <h3>Identity</h3>
+          <div className="eu-grid-2">
+            <div className="eu-field">
+              <label>ID Type</label>
+              <input name="idType" value={user.idType || ""} onChange={handleChange} />
+            </div>
+            <div className="eu-field">
+              <label>ID Number</label>
+              <input name="idNumber" value={user.idNumber || ""} onChange={handleChange} />
+            </div>
+          </div>
+        </div>
+
+        <div className="eu-section">
+          <h3>Emergency Contact</h3>
+          <div className="eu-grid-2">
+            <div className="eu-field">
+              <label>Name</label>
+              <input name="emergencyName" value={user.emergencyName || ""} onChange={handleChange} />
+            </div>
+            <div className="eu-field">
+              <label>Contact</label>
+              <input name="emergencyContact" value={user.emergencyContact || ""} onChange={handleChange} />
+            </div>
+          </div>
+        </div>
+
+        <div className="eu-section">
+          <h3>Address</h3>
+          <div className="eu-grid-2">
+            <div className="eu-field">
+              <label>City</label>
+              <input name="city" value={user.city || ""} onChange={handleChange} />
+            </div>
+            <div className="eu-field">
+              <label>State</label>
+              <input name="state" value={user.state || ""} onChange={handleChange} />
+            </div>
+            <div className="eu-field">
+              <label>Country</label>
+              <input name="country" value={user.country || ""} onChange={handleChange} />
+            </div>
+            <div className="eu-field">
+              <label>Pincode</label>
+              <input name="pincode" value={user.pincode || ""} onChange={handleChange} />
+            </div>
+          </div>
+        </div>
+
+        <button className="eu-delete-btn" type="submit">
+          Save Profile
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default CreateUser;

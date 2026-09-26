@@ -1,0 +1,152 @@
+.package-card{
+  min-width:150px;
+  max-width:150px;
+  min-height:220px;
+
+  border-radius:8px;
+  overflow:hidden;
+  flex-shrink:0;
+  cursor:pointer;
+  background:#111;
+  display:flex;
+  flex-direction:column;
+
+  transition:transform .25s ease;
+}
+
+.package-card:hover{
+  transform:scale(1.05);
+}
+
+/* Poster-style image */
+.package-image-wrapper{
+  width:100%;
+  height:170px;
+  position:relative;
+  overflow:hidden;
+}
+
+.package-image{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* Small logo */
+.package-corner-logo{
+  position:absolute;
+  top:6px;
+  right:6px;
+  width:24px;
+}
+
+/* Shared favorite control for every PackageCard consumer. */
+.package-card__favorite{
+  position:absolute;
+  top:6px;
+  left:6px;
+  box-sizing:border-box;
+  display:grid;
+  place-items:center;
+  flex:0 0 28px;
+  width:28px;
+  height:28px;
+  min-width:28px;
+  min-height:28px;
+  padding:0;
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:50%;
+  background:rgba(0,0,0,0.52);
+  box-shadow:0 6px 18px rgba(0,0,0,0.22);
+  color:#fff;
+  cursor:pointer;
+  line-height:1;
+  backdrop-filter:blur(8px);
+  transition:background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease;
+  z-index:2;
+}
+
+.package-card__favorite:hover{
+  transform:scale(1.08);
+}
+
+.package-card__favorite:focus-visible{
+  outline:2px solid #fff;
+  outline-offset:2px;
+}
+
+.package-card__favorite:disabled{
+  cursor:wait;
+  opacity:.75;
+}
+
+.package-card__favorite-icon{
+  display:block;
+  flex:none;
+  width:15px;
+  height:15px;
+  color:currentColor;
+  font-size:15px;
+  line-height:1;
+  transition:color .2s ease;
+}
+
+.package-card__favorite-icon--active{
+  color:#e50914;
+}
+
+.package-card__favorite-icon--loading{
+  animation:heart-spin .85s linear infinite;
+}
+
+@keyframes heart-spin{
+  to{ transform:rotate(360deg); }
+}
+
+/* Tight title */
+.package-name{
+  padding:8px 6px;
+  font-size:11px;
+  font-weight:600;
+  text-align:center;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Tablet */
+@media(max-width:768px){
+
+  .package-card{
+    min-width:135px;
+    max-width:135px;
+    min-height:200px;
+  }
+
+  .package-image-wrapper{
+    height:150px;
+  }
+}
+
+/* Mobile */
+@media(max-width:480px){
+
+  .package-card{
+    min-width:120px;
+    max-width:120px;
+    min-height:180px;
+  }
+
+  .package-image-wrapper{
+    height:135px;
+  }
+
+  .package-name{
+    font-size:10px;
+  }
+
+  .package-card:hover{
+    transform:none;
+  }
+}

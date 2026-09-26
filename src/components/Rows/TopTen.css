@@ -1,0 +1,92 @@
+.topten-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 12px 0 0;
+}
+
+.topten-title {
+  margin: 0 0 12px clamp(20px, 4vw, 56px);
+}
+
+.topten-scroll {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding: 0 clamp(20px, 4vw, 56px);
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  cursor: default;
+}
+
+.topten-scroll::-webkit-scrollbar { display: none; }
+
+.topten-card-wrapper {
+  position: relative;
+  width: 202px;
+  height: 236px;
+  flex: 0 0 202px;
+}
+
+.topten-index {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  bottom: -4px;
+  color: transparent;
+  font-size: 208px;
+  font-weight: 900;
+  line-height: .78;
+  letter-spacing: -.08em;
+  pointer-events: none;
+  -webkit-text-stroke: 2px rgba(255,255,255,.24);
+}
+
+.topten-index.double-digit { font-size: 190px; letter-spacing: -.14em; }
+
+.topten-card-wrapper .package-card {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+}
+
+/* Keep the existing light surface; only give the rank a clearer brand contrast. */
+[data-theme="light"] .topten-index {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(15,23,42,.32);
+}
+
+.topten-scroll-btn {
+  position: absolute;
+  top: 57%;
+  z-index: 3;
+  width: 44px;
+  height: 74px;
+  border: 1px solid var(--app-border, rgba(255,255,255,.18));
+  border-radius: 999px;
+  background: var(--app-card, rgba(18,18,18,.92));
+  color: var(--app-text, #fff);
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+}
+
+.topten-scroll-btn:hover { background: var(--app-accent, #e50914); color: #fff; }
+.topten-scroll-btn.left { left: 12px; }
+.topten-scroll-btn.right { right: 12px; }
+
+@media (max-width: 640px) {
+  .topten-container { padding-top: 10px; }
+  .topten-scroll { gap: 4px; padding: 0 16px; overflow-x: auto; overflow-y: hidden; cursor: grab; touch-action: pan-x; }
+  .topten-card-wrapper { width: 170px; height: 202px; flex-basis: 170px; }
+  .topten-index { font-size: 166px; }
+  .topten-index.double-digit { font-size: 150px; }
+  .topten-scroll-btn { width: 34px; height: 66px; font-size: 24px; }
+  .topten-scroll-btn.left { left: 6px; }
+  .topten-scroll-btn.right { right: 6px; }
+}
