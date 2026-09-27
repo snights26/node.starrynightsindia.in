@@ -23,7 +23,7 @@ export default function Notifications() {
 
       {/* Header */}
       <div className="ns-header">
-        <h2 className="ns-title">What's New</h2>
+        <h2 className="ns-title">Notifications</h2>
 
         <select
           className="ns-dropdown"

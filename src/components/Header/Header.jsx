@@ -78,7 +78,6 @@ export default function Header() {
             <Link to="/">Home</Link>
             <Link to="/trending">Trending</Link>
             <Link to="/gallery">Gallery</Link>
-            <Link to="/updates">What's New</Link>
             <Link to="/about">About Us</Link>
             <Link to="/careers">Careers</Link>
             <Link to="/contact">Contact</Link>
@@ -125,7 +124,6 @@ export default function Header() {
         <Link to="/"  className={location.pathname === "/" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Home</Link>
         <Link to="/trending" className={location.pathname === "/trending" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Trending</Link>
         <Link to="/gallery" className={location.pathname === "/gallery" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Gallery</Link>
-        <Link to="/updates" className={location.pathname === "/updates" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>What's New</Link>
         <Link to="/about" className={location.pathname === "/about" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>About Us</Link>
         <Link to="/careers" className={location.pathname === "/careers" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Careers</Link>
         <Link to="/contact" className={location.pathname === "/contact" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Contact</Link>
