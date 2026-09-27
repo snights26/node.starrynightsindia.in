@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { MdChevronLeft, MdChevronRight, MdLocationOn, MdPublic, MdTravelExplore } from "react-icons/md";
+import { MdAdd, MdChevronLeft, MdChevronRight, MdLocationOn, MdPublic, MdRemove, MdTravelExplore } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { EmptyState } from "../../common";
 import Pagination, { usePagination } from "../../components/Common/Pagination";
@@ -60,6 +60,9 @@ const REGION_COLOR_FALLBACKS = [
   "#d94f70",
   "#9aa04e"
 ];
+const MAP_ZOOM_MIN = 1;
+const MAP_ZOOM_MAX = 2.25;
+const MAP_ZOOM_STEP = 0.25;
 
 const REGION_NAME_ALIASES = {
   "andaman and nicobar": "andaman and nicobar islands",
@@ -427,6 +430,7 @@ export default function Click2Explore() {
   const [packagesByRegion, setPackagesByRegion] = useState({});
   const [loadingPackages, setLoadingPackages] = useState(false);
   const [packageLoadFailed, setPackageLoadFailed] = useState(false);
+  const [zoomByMap, setZoomByMap] = useState({ domestic: MAP_ZOOM_MIN, international: MAP_ZOOM_MIN });
 
   const activeMap = MAPS[slideIndex];
   const activeGeoData = geoDataByMap[activeMap.key] || { geoJson: null, coordinateMode: "geo" };
@@ -440,6 +444,9 @@ export default function Click2Explore() {
   const selectedRegionCode = selectedByMap[activeMap.key] || activeMap.defaultRegionCode;
   const selectedPackageCategoryCode = REGION_PACKAGE_CATEGORY_CODE_ALIASES[selectedRegionCode]
     || selectedRegionCode;
+  const activeZoom = zoomByMap[activeMap.key] || MAP_ZOOM_MIN;
+  const activeMapBox = useMemo(() => parseViewBox(activeMap.viewBox), [activeMap.viewBox]);
+  const mapZoomTransform = `translate(${activeMapBox.x + activeMapBox.width / 2} ${activeMapBox.y + activeMapBox.height / 2}) scale(${activeZoom}) translate(${-activeMapBox.x - activeMapBox.width / 2} ${-activeMapBox.y - activeMapBox.height / 2})`;
 
   const categoriesByCode = useMemo(() => {
     return new Map(flattenCategories(categoryTree).map((category) => [category.code || category.categoryCode, category]));
@@ -550,7 +557,16 @@ export default function Click2Explore() {
   }, [selectedRegionCode, selectedPackageCategoryCode, packagesByRegion]);
 
   const changeSlide = (nextIndex) => {
-    setSlideIndex((nextIndex + MAPS.length) % MAPS.length);
+    const destination = (nextIndex + MAPS.length) % MAPS.length;
+    setSlideIndex(destination);
+    setZoomByMap((previous) => ({ ...previous, [MAPS[destination].key]: MAP_ZOOM_MIN }));
+  };
+
+  const changeZoom = (direction) => {
+    setZoomByMap((previous) => ({
+      ...previous,
+      [activeMap.key]: Math.min(MAP_ZOOM_MAX, Math.max(MAP_ZOOM_MIN, Number(((previous[activeMap.key] || MAP_ZOOM_MIN) + direction * MAP_ZOOM_STEP).toFixed(2))))
+    }));
   };
 
   const selectRegion = (feature, mapKey = activeMap.key) => {
@@ -610,6 +626,7 @@ export default function Click2Explore() {
                 <p>{activeMap.description}</p>
               </div>
 
+              <div className="explorer-map-wrap">
               <svg
                 className={`explorer-map explorer-map--${activeMap.key}`}
                 viewBox={activeMap.viewBox}
@@ -625,7 +642,7 @@ export default function Click2Explore() {
                   />
                 )}
                 {mapReady ? (
-                <g className="map-regions-layer">
+                <g className="map-regions-layer" transform={mapZoomTransform}>
                   {activeGeoJson.features.map((feature, index) => {
                     const properties = featureProperties(feature);
                     const code = resolveFeatureCode(feature) || `${activeMap.key}-${index}`;
@@ -701,6 +718,11 @@ export default function Click2Explore() {
                   <text className="map-loading-label" x="50%" y="50%">Loading map…</text>
                 )}
               </svg>
+              <div className="explorer-map-zoom" role="group" aria-label={`${activeMap.label} map zoom`}>
+                <button type="button" onClick={() => changeZoom(1)} disabled={activeZoom >= MAP_ZOOM_MAX} aria-label="Zoom in map"><MdAdd /></button>
+                <button type="button" onClick={() => changeZoom(-1)} disabled={activeZoom <= MAP_ZOOM_MIN} aria-label="Zoom out map"><MdRemove /></button>
+              </div>
+              </div>
             </article>
           </div>
 
