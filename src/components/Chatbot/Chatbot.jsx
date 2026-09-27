@@ -112,8 +112,7 @@ export default function Chatbot() {
       setMessages((prev) => [
         ...prev,
         { sender: "chatbot-bot", text: response.answer || "I could not prepare an answer right now." },
-        ...(response.packages?.length ? [{ sender: "chatbot-bot", type: "packages", data: response.packages }] : []),
-        ...(response.quickReplies?.length ? [{ sender: "chatbot-bot", type: "quickReplies", data: response.quickReplies }] : [])
+        ...(response.packages?.length ? [{ sender: "chatbot-bot", type: "packages", data: response.packages }] : [])
       ]);
     } catch {
       setMessages((prev) => [
@@ -245,18 +244,6 @@ export default function Chatbot() {
                     >
                       <span aria-hidden="true">›</span>
                     </button>
-                  </div>
-                );
-              }
-
-              if (msg.type === "quickReplies") {
-                return (
-                  <div className="chatbot-quick-replies" key={i}>
-                    {msg.data.map((reply) => (
-                      <button type="button" key={reply} onClick={() => sendMessage(reply)}>
-                        {reply}
-                      </button>
-                    ))}
                   </div>
                 );
               }
