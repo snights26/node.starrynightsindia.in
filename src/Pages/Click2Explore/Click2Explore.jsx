@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MdAdd, MdChevronLeft, MdChevronRight, MdLocationOn, MdPublic, MdRemove, MdTravelExplore } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { EmptyState } from "../../common";
@@ -63,6 +63,7 @@ const REGION_COLOR_FALLBACKS = [
 const MAP_ZOOM_MIN = 1;
 const MAP_ZOOM_MAX = 2.25;
 const MAP_ZOOM_STEP = 0.25;
+const MAP_DRAG_THRESHOLD = 6;
 
 const REGION_NAME_ALIASES = {
   "andaman and nicobar": "andaman and nicobar islands",
@@ -431,6 +432,9 @@ export default function Click2Explore() {
   const [loadingPackages, setLoadingPackages] = useState(false);
   const [packageLoadFailed, setPackageLoadFailed] = useState(false);
   const [zoomByMap, setZoomByMap] = useState({ domestic: MAP_ZOOM_MIN, international: MAP_ZOOM_MIN });
+  const [panByMap, setPanByMap] = useState({ domestic: { x: 0, y: 0 }, international: { x: 0, y: 0 } });
+  const mapDrag = useRef(null);
+  const mapWasDragged = useRef(false);
 
   const activeMap = MAPS[slideIndex];
   const activeGeoData = geoDataByMap[activeMap.key] || { geoJson: null, coordinateMode: "geo" };
@@ -445,8 +449,9 @@ export default function Click2Explore() {
   const selectedPackageCategoryCode = REGION_PACKAGE_CATEGORY_CODE_ALIASES[selectedRegionCode]
     || selectedRegionCode;
   const activeZoom = zoomByMap[activeMap.key] || MAP_ZOOM_MIN;
+  const activePan = panByMap[activeMap.key] || { x: 0, y: 0 };
   const activeMapBox = useMemo(() => parseViewBox(activeMap.viewBox), [activeMap.viewBox]);
-  const mapZoomTransform = `translate(${activeMapBox.x + activeMapBox.width / 2} ${activeMapBox.y + activeMapBox.height / 2}) scale(${activeZoom}) translate(${-activeMapBox.x - activeMapBox.width / 2} ${-activeMapBox.y - activeMapBox.height / 2})`;
+  const mapZoomTransform = `translate(${activePan.x} ${activePan.y}) translate(${activeMapBox.x + activeMapBox.width / 2} ${activeMapBox.y + activeMapBox.height / 2}) scale(${activeZoom}) translate(${-activeMapBox.x - activeMapBox.width / 2} ${-activeMapBox.y - activeMapBox.height / 2})`;
 
   const categoriesByCode = useMemo(() => {
     return new Map(flattenCategories(categoryTree).map((category) => [category.code || category.categoryCode, category]));
@@ -560,22 +565,73 @@ export default function Click2Explore() {
     const destination = (nextIndex + MAPS.length) % MAPS.length;
     setSlideIndex(destination);
     setZoomByMap((previous) => ({ ...previous, [MAPS[destination].key]: MAP_ZOOM_MIN }));
+    setPanByMap((previous) => ({ ...previous, [MAPS[destination].key]: { x: 0, y: 0 } }));
+    mapDrag.current = null;
+    mapWasDragged.current = false;
+  };
+
+  const clampPan = (pan, zoom) => {
+    if (zoom <= MAP_ZOOM_MIN) return { x: 0, y: 0 };
+    const maxX = activeMapBox.width * (zoom - MAP_ZOOM_MIN) / 2;
+    const maxY = activeMapBox.height * (zoom - MAP_ZOOM_MIN) / 2;
+    return {
+      x: Math.min(maxX, Math.max(-maxX, pan.x)),
+      y: Math.min(maxY, Math.max(-maxY, pan.y))
+    };
   };
 
   const changeZoom = (direction) => {
-    setZoomByMap((previous) => ({
+    const nextZoom = Math.min(MAP_ZOOM_MAX, Math.max(MAP_ZOOM_MIN, Number((activeZoom + direction * MAP_ZOOM_STEP).toFixed(2))));
+    setZoomByMap((previous) => ({ ...previous, [activeMap.key]: nextZoom }));
+    setPanByMap((previous) => ({
       ...previous,
-      [activeMap.key]: Math.min(MAP_ZOOM_MAX, Math.max(MAP_ZOOM_MIN, Number(((previous[activeMap.key] || MAP_ZOOM_MIN) + direction * MAP_ZOOM_STEP).toFixed(2))))
+      [activeMap.key]: clampPan(previous[activeMap.key] || { x: 0, y: 0 }, nextZoom)
     }));
   };
 
   const selectRegion = (feature, mapKey = activeMap.key) => {
+    if (mapWasDragged.current) return;
     const code = resolveFeatureCode(feature);
     if (!code) return;
     setSelectedByMap((previous) => ({
       ...previous,
       [mapKey]: code
     }));
+  };
+
+  const handleMapPointerDown = (event) => {
+    if (activeZoom <= MAP_ZOOM_MIN || (event.pointerType === "mouse" && event.button !== 0)) return;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    mapWasDragged.current = false;
+    mapDrag.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      origin: activePan,
+      dragged: false
+    };
+  };
+
+  const handleMapPointerMove = (event) => {
+    const drag = mapDrag.current;
+    if (!drag || activeZoom <= MAP_ZOOM_MIN) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (!drag.dragged && Math.hypot(dx, dy) < MAP_DRAG_THRESHOLD) return;
+    drag.dragged = true;
+    mapWasDragged.current = true;
+    event.preventDefault();
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const scale = Math.min(bounds.width / activeMapBox.width, bounds.height / activeMapBox.height) || 1;
+    setPanByMap((previous) => ({
+      ...previous,
+      [activeMap.key]: clampPan({ x: drag.origin.x + dx / scale, y: drag.origin.y + dy / scale }, activeZoom)
+    }));
+  };
+
+  const handleMapPointerEnd = (event) => {
+    if (mapDrag.current) event.currentTarget.releasePointerCapture?.(event.pointerId);
+    mapDrag.current = null;
+    if (mapWasDragged.current) window.setTimeout(() => { mapWasDragged.current = false; }, 80);
   };
 
   return (
@@ -628,11 +684,15 @@ export default function Click2Explore() {
 
               <div className="explorer-map-wrap">
               <svg
-                className={`explorer-map explorer-map--${activeMap.key}`}
+                className={`explorer-map explorer-map--${activeMap.key}${activeZoom > MAP_ZOOM_MIN ? " is-pannable" : ""}`}
                 viewBox={activeMap.viewBox}
                 role="img"
                 aria-label={`${activeMap.label} region map`}
                 preserveAspectRatio="xMidYMid meet"
+                onPointerDown={handleMapPointerDown}
+                onPointerMove={handleMapPointerMove}
+                onPointerUp={handleMapPointerEnd}
+                onPointerCancel={handleMapPointerEnd}
               >
                 <rect {...activeMap.backdrop} className="map-backdrop" style={{ "--map-bg": activeMap.background }} />
                 {showLandmass && (

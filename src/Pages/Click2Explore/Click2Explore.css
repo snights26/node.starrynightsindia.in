@@ -178,6 +178,15 @@
   border-radius: 18px;
 }
 
+.explorer-map.is-pannable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.explorer-map.is-pannable:active {
+  cursor: grabbing;
+}
+
 .explorer-map-wrap {
   position: relative;
   display: grid;
