@@ -601,7 +601,6 @@ export default function Click2Explore() {
 
   const handleMapPointerDown = (event) => {
     if (activeZoom <= MAP_ZOOM_MIN || (event.pointerType === "mouse" && event.button !== 0)) return;
-    event.currentTarget.setPointerCapture?.(event.pointerId);
     mapWasDragged.current = false;
     mapDrag.current = {
       startX: event.clientX,
@@ -617,6 +616,7 @@ export default function Click2Explore() {
     const dx = event.clientX - drag.startX;
     const dy = event.clientY - drag.startY;
     if (!drag.dragged && Math.hypot(dx, dy) < MAP_DRAG_THRESHOLD) return;
+    if (!drag.dragged) event.currentTarget.setPointerCapture?.(event.pointerId);
     drag.dragged = true;
     mapWasDragged.current = true;
     event.preventDefault();
@@ -629,7 +629,7 @@ export default function Click2Explore() {
   };
 
   const handleMapPointerEnd = (event) => {
-    if (mapDrag.current) event.currentTarget.releasePointerCapture?.(event.pointerId);
+    if (mapDrag.current?.dragged) event.currentTarget.releasePointerCapture?.(event.pointerId);
     mapDrag.current = null;
     if (mapWasDragged.current) window.setTimeout(() => { mapWasDragged.current = false; }, 80);
   };
