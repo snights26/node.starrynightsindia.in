@@ -5,9 +5,9 @@
   padding: 12px 0 0;
 }
 
-.topten-title {
-  margin: 0 0 12px clamp(20px, 4vw, 56px);
-}
+.topten-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 clamp(20px, 4vw, 56px) 12px; }
+.topten-title { margin: 0; min-width: 0; }
+.topten-view-all { flex: 0 0 auto; border: 0; background: transparent; color: var(--app-accent, #e50914); font: inherit; font-weight: 800; cursor: pointer; }
 
 .topten-scroll {
   display: flex;
@@ -82,6 +82,8 @@
 
 @media (max-width: 640px) {
   .topten-container { padding-top: 10px; }
+  .topten-header { margin: 0 16px 10px; gap: 10px; }
+  .topten-title { font-size: 1.25rem; }
   .topten-scroll { gap: 4px; padding: 0 16px; overflow-x: auto; overflow-y: hidden; cursor: grab; touch-action: pan-x; }
   .topten-card-wrapper { width: 170px; height: 202px; flex-basis: 170px; }
   .topten-index { font-size: 166px; }
