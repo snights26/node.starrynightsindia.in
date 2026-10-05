@@ -65,8 +65,8 @@ export default function Header() {
             </div>
 
               <div className="luxury-logo" onClick={() => navigate("/")}>
-                <img 
-                  src="/Starry-Nights-Header.png" 
+                <img
+                  src="/Starry%20Nights%20Header.png"
                   alt="Starry Nights Logo" 
                   className="header-logo-img"
                 />
