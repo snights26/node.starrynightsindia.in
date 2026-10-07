@@ -36,7 +36,14 @@ export default function LegalPolicy({ policy }) {
       <section className="legal-policy-content" aria-labelledby="legal-policy-title">
         <p className="legal-policy-eyebrow">Starry Nights Holidays</p>
         <h1 id="legal-policy-title">{selectedPolicy.title}</h1>
-        {selectedPolicy.items ? (
+        {policy === "privacy" ? (
+          <>
+            <p>Starry Nights uses account information to provide travel planning, saved journeys, account features, and customer support.</p>
+            <h2>Account deletion</h2>
+            <p>You can permanently delete your Starry Nights account at any time from <Link to="/delete-account">Delete Account</Link>. Deletion removes your account profile, sign-in identifiers, sessions, saved packages, viewing history, personal photos, targeted notifications, and other account-specific data.</p>
+            <p>Where a booking, payment, enquiry, contact, or career record must be retained for legitimate operational, legal, or security purposes, Starry Nights removes the account link and personal contact details instead of retaining an identifiable account record.</p>
+          </>
+        ) : selectedPolicy.items ? (
           <ul>
             {selectedPolicy.items.map((item) => <li key={item}>{item}</li>)}
           </ul>

@@ -1,0 +1,85 @@
+.delete-account-page {
+  min-height: min(68vh, 760px);
+  display: grid;
+  place-items: center;
+  padding: 48px 20px;
+  background: var(--app-background);
+  color: var(--app-text);
+}
+
+.delete-account-card {
+  width: min(100%, 580px);
+  display: grid;
+  gap: 16px;
+  padding: clamp(24px, 5vw, 44px);
+  border: 1px solid var(--app-border);
+  border-radius: 20px;
+  background: var(--app-card);
+  box-shadow: var(--app-shadow);
+}
+
+.delete-account-card h1,
+.delete-account-card p { margin: 0; }
+.delete-account-card h1 { color: var(--app-text); }
+.delete-account-card p { color: var(--app-text-muted); line-height: 1.6; }
+
+.delete-account-eyebrow {
+  color: var(--app-accent) !important;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.delete-account-retention { font-size: 0.92rem; }
+
+.delete-account-card label {
+  margin-top: 4px;
+  color: var(--app-text);
+  font-weight: 700;
+}
+
+.delete-account-card input {
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  outline: none;
+  background: var(--app-card-soft);
+  color: var(--app-text);
+  font: inherit;
+}
+
+.delete-account-card input:focus { border-color: var(--app-accent); }
+
+.delete-account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.delete-account-primary,
+.delete-account-secondary,
+.delete-account-danger {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: 1px solid var(--app-border);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.delete-account-primary { border-color: transparent; background: var(--app-accent); color: #fff; }
+.delete-account-secondary { background: var(--app-card-soft); color: var(--app-text); }
+.delete-account-danger { border-color: #b42318; background: #b42318; color: #fff; }
+.delete-account-primary:disabled,
+.delete-account-secondary:disabled,
+.delete-account-danger:disabled { cursor: not-allowed; opacity: 0.55; }
+.delete-account-error { color: #b42318 !important; font-weight: 700; }
+
+@media (max-width: 480px) {
+  .delete-account-page { padding: 28px 16px; }
+  .delete-account-actions > * { flex: 1 1 100%; }
+}

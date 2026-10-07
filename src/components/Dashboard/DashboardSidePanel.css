@@ -112,7 +112,8 @@
 }
 
 .side-profile-note,
-.side-logout-btn {
+.side-logout-btn,
+.side-delete-account-btn {
   min-height: 40px;
   border-radius: 12px;
   border: 1px solid var(--app-border);
@@ -154,6 +155,19 @@
 .side-logout-btn:hover {
   transform: translateY(-1px);
   filter: brightness(1.05);
+}
+
+.side-delete-account-btn {
+  width: 100%;
+  padding: 0 18px;
+  border-color: #b42318;
+  background: transparent;
+  color: #b42318;
+}
+
+.side-delete-account-btn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, #b42318 11%, transparent);
 }
 
 .side-card {

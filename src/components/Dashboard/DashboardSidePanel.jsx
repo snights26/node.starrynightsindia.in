@@ -67,6 +67,7 @@ export default function DashboardSidePanel({ onReady }) {
           )}
 
           <button className="side-logout-btn" onClick={handleLogout}>Logout</button>
+          <button className="side-delete-account-btn" type="button" onClick={() => navigate("/delete-account")}>Delete Account</button>
         </div>
       </div>
 

@@ -4,7 +4,7 @@ import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { GOOGLE_AUTH_ENABLED, GOOGLE_CLIENT_ID } from "../../config/authConfig";
 
-export default function LoginPopup({ onClose }) {
+export default function LoginPopup({ onClose, redirectTo = "/dashboard" }) {
   const { googleLogin } = useAuth();
   const navigate = useNavigate();
   const googleButtonRef = useRef(null);
@@ -30,7 +30,7 @@ export default function LoginPopup({ onClose }) {
               if (!credential) throw new Error("Missing Google credential");
               await googleLogin(credential);
               onClose();
-              navigate("/dashboard");
+              navigate(redirectTo);
             } catch (error) {
               console.error("Google Login failed", error);
               alert(error?.response?.data?.message || "Google Login failed");
@@ -81,7 +81,7 @@ export default function LoginPopup({ onClose }) {
       script.onload = null;
       script.onerror = null;
     };
-  }, [googleLogin, navigate, onClose]);
+  }, [googleLogin, navigate, onClose, redirectTo]);
 
   return (
     <div className="netflix-modal-overlay" onClick={onClose}>
