@@ -40,6 +40,7 @@ const CreateUser = lazy(() => import("./components/AuthFolder/createUser"));
 const TimeZones = lazy(() => import("./Pages/TimeZones/TimeZones"));
 const LegalPolicy = lazy(() => import("./Pages/LegalPolicies/LegalPolicy"));
 const DeleteAccount = lazy(() => import("./Pages/Account/DeleteAccount"));
+const Download = lazy(() => import("./Pages/Download/Download"));
 
 function App() {
   return (
@@ -88,6 +89,7 @@ function App() {
           <Route path="/updates" element={<Notifications />} />
           <Route path="/privacy-policy" element={<LegalPolicy policy="privacy" />} />
           <Route path="/delete-account" element={<DeleteAccount />} />
+          <Route path="/download" element={<Download />} />
           <Route path="/terms-and-conditions" element={<LegalPolicy policy="terms" />} />
           <Route path="/cancellation-refund-policy" element={<LegalPolicy policy="cancellation" />} />
           <Route path="/payment-policy" element={<LegalPolicy policy="payment" />} />

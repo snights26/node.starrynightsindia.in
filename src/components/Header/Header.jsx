@@ -80,6 +80,7 @@ export default function Header() {
             <Link to="/gallery">Gallery</Link>
             <Link to="/about">About Us</Link>
             <Link to="/careers">Careers</Link>
+            <Link to="/download">Download App</Link>
             <Link to="/contact">Contact</Link>
             <Link to="/Enquiry" className="nav-cta">Enquire Now</Link>
           </nav>
@@ -126,6 +127,7 @@ export default function Header() {
         <Link to="/gallery" className={location.pathname === "/gallery" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Gallery</Link>
         <Link to="/about" className={location.pathname === "/about" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>About Us</Link>
         <Link to="/careers" className={location.pathname === "/careers" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Careers</Link>
+        <Link to="/download" className={location.pathname === "/download" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Download App</Link>
         <Link to="/contact" className={location.pathname === "/contact" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>Contact</Link>
         <Link to="/Enquiry" className={location.pathname === "/Enquiry" ? "active-link" : ""} onClick={() => setMenuOpen(false)}>
           Enquire Now

@@ -1,0 +1,72 @@
+.android-download-page {
+  min-height: min(68vh, 760px);
+  display: grid;
+  place-items: center;
+  padding: 48px 20px;
+  background: var(--app-background);
+  color: var(--app-text);
+}
+
+.android-download-card {
+  width: min(100%, 620px);
+  display: grid;
+  gap: 18px;
+  padding: clamp(24px, 5vw, 44px);
+  border: 1px solid var(--app-border);
+  border-radius: 20px;
+  background: var(--app-card);
+  box-shadow: var(--app-shadow);
+}
+
+.android-download-card h1,
+.android-download-card p { margin: 0; }
+.android-download-card h1 { color: var(--app-text); }
+.android-download-eyebrow {
+  color: var(--app-accent) !important;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.android-download-intro,
+.android-download-note,
+.android-download-message { color: var(--app-text-muted); line-height: 1.6; }
+
+.android-release-details {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: var(--app-border);
+}
+.android-release-details > div {
+  display: grid;
+  grid-template-columns: minmax(135px, 0.4fr) 1fr;
+  gap: 16px;
+  padding: 13px 15px;
+  background: var(--app-card-soft);
+}
+.android-release-details dt { color: var(--app-text-muted); font-weight: 700; }
+.android-release-details dd { margin: 0; color: var(--app-text); font-weight: 800; overflow-wrap: anywhere; }
+.android-release-details .android-release-notes { grid-template-columns: 1fr; }
+.android-release-notes dd { font-weight: 500; line-height: 1.55; white-space: pre-wrap; }
+
+.android-download-button {
+  min-height: 48px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 20px;
+  border-radius: 10px;
+  background: var(--app-accent);
+  color: #fff;
+  font-weight: 900;
+  text-decoration: none;
+}
+.android-download-button:hover { filter: brightness(1.08); color: #fff; }
+
+@media (max-width: 520px) {
+  .android-download-page { padding: 28px 16px; }
+  .android-release-details > div { grid-template-columns: 1fr; gap: 4px; }
+}
