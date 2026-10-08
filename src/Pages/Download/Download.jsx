@@ -12,14 +12,20 @@ const formatFileSize = (value) => {
 
 export default function Download() {
   const [release, setRelease] = useState(null);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
     api.get("/app-releases/android/current")
-      .then((data) => { if (active) setRelease(data); })
+      .then((data) => {
+        if (!active) return;
+        setRelease(data ?? null);
+        setLoaded(true);
+      })
       .catch((requestError) => {
         if (!active) return;
+        setLoaded(true);
         if (requestError?.response?.status === 404) {
           setError("The Android download will be available here shortly.");
           return;
@@ -36,7 +42,8 @@ export default function Download() {
         <h1 id="android-download-title">Starry Nights for Android</h1>
         <p className="android-download-intro">Download the current Android APK directly from Starry Nights.</p>
         {error ? <p className="android-download-message" role="status">{error}</p> : null}
-        {!release && !error ? <p className="android-download-message" aria-live="polite">Loading the current Android release…</p> : null}
+        {!loaded && !error ? <p className="android-download-message" aria-live="polite">Loading the current Android release…</p> : null}
+        {loaded && !release && !error ? <p className="android-download-message" role="status">The Android download will be available here shortly.</p> : null}
         {release ? (
           <>
             <dl className="android-release-details">
