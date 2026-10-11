@@ -36,7 +36,6 @@ export default function AboutUs() {
 
     const previousTitle = document.title;
     const pageUrl = `${window.location.origin}/about`;
-    const imageUrl = `${window.location.origin}/TEAM-STARRY-NIGHTS.jpg`;
     document.title = ABOUT_PAGE_TITLE;
 
     const removeMetaTags = [
@@ -44,9 +43,7 @@ export default function AboutUs() {
       upsertMetaTag("property", "og:title", ABOUT_PAGE_TITLE),
       upsertMetaTag("property", "og:description", ABOUT_PAGE_DESCRIPTION),
       upsertMetaTag("property", "og:type", "website"),
-      upsertMetaTag("property", "og:url", pageUrl),
-      upsertMetaTag("property", "og:image", imageUrl),
-    ];
+      upsertMetaTag("property", "og:url", pageUrl),    ];
 
     return () => {
       document.title = previousTitle;
@@ -57,10 +54,7 @@ export default function AboutUs() {
   return (
     <div className="about-page">
 
-      {/* TEAM IMAGE */}
-<section className="team-banner">
-  <img src="/TEAM-STARRY-NIGHTS.jpg" alt="Starry Nights India travel planning and tour operations team" />
-</section>
+
 
       {/* HERO */}
 <section className="about-hero">
