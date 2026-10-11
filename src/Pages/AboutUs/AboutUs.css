@@ -35,9 +35,12 @@
 
 .about-hero {
   width: 100%;
-  padding: 34px 8% 56px;
+  margin-top: 0;
+  padding: 110px 8% 56px;
   text-align: center;
   background: var(--app-page-gradient, linear-gradient(180deg, #000000, #050505));
+  position: relative;
+  box-sizing: border-box;
 }
 
 .about-hero h1 {
@@ -273,4 +276,9 @@ html[data-theme="dark"] .about-page {
   .vm-card {
     padding: 16px;
   }
+.about-hero {
+  padding: 90px 5% 42px;
 }
+}
+
+
